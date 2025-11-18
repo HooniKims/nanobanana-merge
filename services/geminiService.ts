@@ -1,13 +1,18 @@
 import { GoogleGenAI, Modality, Part } from "@google/genai";
 
+// 사용자가 제공한 API 키를 여기에 직접 설정합니다.
+// 경고: 이 방법은 보안에 취약하므로, 단기적이고 개인적인 용도로만 사용해야 합니다.
+// 절대 이 코드를 공개적인 곳에 배포하거나 공유하지 마세요.
+const API_KEY = "AIzaSyANiTacdep5GL_dA9A3Fi5-YMPn-W7qglU";
+
 let ai: GoogleGenAI | null = null;
 
 const getAi = () => {
     if (!ai) {
-        // FIX: Removed hardcoded API key and placeholder check which caused a TypeScript error.
-        // The Gemini API client is now initialized with the API key from `process.env.API_KEY`
-        // as per the coding guidelines.
-        ai = new GoogleGenAI({ apiKey: process.env.API_KEY! });
+        if (!API_KEY) {
+            throw new Error("API 키가 services/geminiService.ts 파일에 설정되지 않았습니다.");
+        }
+        ai = new GoogleGenAI({ apiKey: API_KEY });
     }
     return ai;
 };
