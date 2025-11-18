@@ -1,9 +1,12 @@
+
 import React, { useState, useCallback } from 'react';
 import { Header } from './components/Header';
 import { ImageUploader } from './components/ImageUploader';
 import { Spinner } from './components/Spinner';
 import { mergeImages } from './services/geminiService';
 import { fileToGenerativePart } from './utils/fileUtils';
+
+const API_KEY_CONFIGURED = !!process.env.API_KEY;
 
 type ImageData = {
   file: File | null;
@@ -15,6 +18,29 @@ const DownloadIcon: React.FC<{ className?: string }> = ({ className }) => (
         <path strokeLinecap="round" strokeLinejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
     </svg>
 );
+
+const ApiKeyMissingError: React.FC = () => (
+    <div className="flex flex-col items-center justify-center text-center h-full">
+        <h2 className="text-2xl font-bold text-red-400 mb-4">설정 오류: API 키가 없습니다.</h2>
+        <p className="max-w-xl text-gray-300">
+            이 애플리케이션이 Google AI 서비스와 통신하려면 API 키가 필요합니다. 배포 환경에서 API 키를 설정해주세요.
+        </p>
+        <div className="mt-6 text-left bg-gray-800 p-6 rounded-lg max-w-xl w-full">
+            <h3 className="font-bold text-lg mb-2 text-white">해결 방법:</h3>
+            <p className="text-gray-400">
+                Netlify, Vercel 등 사용하시는 호스팅 서비스의 대시보드에서 환경 변수를 설정해야 합니다.
+            </p>
+            <ul className="list-disc list-inside mt-4 space-y-2 text-gray-400">
+                <li>변수 이름 (Key): <code className="bg-gray-700 text-yellow-300 px-2 py-1 rounded">API_KEY</code></li>
+                <li>변수 값 (Value): <code className="bg-gray-700 text-yellow-300 px-2 py-1 rounded">[여기에 실제 Gemini API 키를 붙여넣으세요]</code></li>
+            </ul>
+            <p className="mt-4 text-gray-400">
+                환경 변수를 추가한 후, 사이트를 **다시 배포(re-deploy)**해야 변경사항이 적용됩니다.
+            </p>
+        </div>
+    </div>
+);
+
 
 const App: React.FC = () => {
   const [portrait, setPortrait] = useState<ImageData>({ file: null, previewUrl: null });
@@ -71,6 +97,21 @@ const App: React.FC = () => {
   };
   
   const canMerge = portrait.file && background.file && !isLoading;
+  
+  if (!API_KEY_CONFIGURED) {
+    return (
+        <div className="min-h-screen bg-gray-900 text-gray-100 font-sans p-4 sm:p-6 lg:p-8">
+            <div className="max-w-6xl mx-auto">
+                <Header />
+                <main className="mt-8">
+                    <div className="bg-gray-800/50 rounded-lg p-8 min-h-[50vh] flex items-center justify-center">
+                        <ApiKeyMissingError />
+                    </div>
+                </main>
+            </div>
+        </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-900 text-gray-100 font-sans p-4 sm:p-6 lg:p-8">
