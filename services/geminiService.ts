@@ -3,7 +3,7 @@ import { GoogleGenAI, Modality, Part } from "@google/genai";
 // 사용자가 제공한 API 키를 여기에 직접 설정합니다.
 // 경고: 이 방법은 보안에 취약하므로, 단기적이고 개인적인 용도로만 사용해야 합니다.
 // 절대 이 코드를 공개적인 곳에 배포하거나 공유하지 마세요.
-const API_KEY = "AIzaSyANiTacdep5GL_dA9A3Fi5-YMPn-W7qglU";
+const API_KEY = "AIzaSyAR70GZ5geXXtvezWXtCdLdFiNNzn9_rNY";
 
 let ai: GoogleGenAI | null = null;
 
@@ -49,6 +49,9 @@ export const mergeImages = async (backgroundPart: Part, portraitPart: Part): Pro
     } catch (error) {
         console.error("Error calling Gemini API:", error);
         // 사용자가 볼 수 있도록 오류 메시지를 더 구체적으로 전달
+        if (error instanceof Error && error.message.includes('RESOURCE_EXHAUSTED')) {
+             throw new Error("API 사용량 한도를 초과했습니다. 잠시 후 다시 시도하거나 다른 API 키를 사용해 주세요.");
+        }
         if (error instanceof Error) {
             throw new Error(`API 오류: ${error.message}`);
         }
