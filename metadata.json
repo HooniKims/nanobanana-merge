@@ -1,0 +1,5 @@
+{
+  "name": "Nano Banana 이미지 합성",
+  "description": "Gemini(나노바나나)를 사용하여 한 사진의 인물을 다른 사진의 배경에 자연스럽게 합성하는 애플리케이션입니다. 인물 사진과 배경 사진을 업로드하여 합성 사진을 만들어 보세요.",
+  "requestFramePermissions": []
+}
